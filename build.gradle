@@ -1,0 +1,18 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile files('libs/htmlunit-2.18-OSGi.jar')
+}
+jar {
+    manifest {
+        attributes("Main-Class": "Slayer.bot.downBot",
+                   "Application-Name": "DownBot")
+    }
+}
