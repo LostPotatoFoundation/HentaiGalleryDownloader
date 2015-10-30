@@ -1,5 +1,7 @@
 package Slayer.DownBot;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,7 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,12 +17,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class DownBot extends Application {
-    static final File outputDir = new File(System.getProperty("user.dir") + "/FakkuDownloads/");
+    static final File outputDir = new File(System.getProperty("user.dir") + "/Dloads/");
+    static final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("botGUI.fxml"));
-        primaryStage.setTitle("Fakku Comic Downloader");
+        primaryStage.setTitle("Hentai Comic Downloader");
         primaryStage.setScene(new Scene(root, 270, 375));
         primaryStage.show();
     }
@@ -36,7 +39,7 @@ public class DownBot extends Application {
             return (BufferedImage) img;
 
         // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB_PRE);
 
         // Draw the image on to the buffered image
         Graphics2D bGr = bimage.createGraphics();

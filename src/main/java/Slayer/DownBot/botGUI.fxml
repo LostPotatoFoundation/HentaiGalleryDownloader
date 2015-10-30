@@ -10,11 +10,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="375.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Slayer.DownBot.Controller">
    <children>
-      <TextArea fx:id="input" layoutX="14.0" layoutY="47.0" prefHeight="242.0" prefWidth="241.0" promptText="Put fakku /read links here" />
-      <Button layoutX="80.0" layoutY="318.0" mnemonicParsing="false" onAction="#downloadImages" text="Download Images" />
-      <CheckBox fx:id="zip" layoutX="14.0" layoutY="289.0" mnemonicParsing="false" text="ZipImages" />
+      <TextArea fx:id="input" layoutX="14.0" layoutY="47.0" prefHeight="262.0" prefWidth="241.0" promptText="Put fakku/exhentai/e-hentai links here, Split extra links with comma" />
+      <Button layoutX="79.0" layoutY="336.0" mnemonicParsing="false" onAction="#downloadImages" text="Download Images" />
+      <CheckBox fx:id="zip" layoutX="14.0" layoutY="312.0" mnemonicParsing="false" text="ZipImages" />
       <TextField fx:id="amount" layoutX="60.0" layoutY="14.0" promptText="Number of Pages" text="-1" />
-      <CheckBox fx:id="cbz" layoutX="168.0" layoutY="289.0" mnemonicParsing="false" text="Output CBZ" />
-      <ProgressBar fx:id="progress" layoutX="35.0" layoutY="343.0" prefWidth="200.0" progress="0.0" />
+      <CheckBox fx:id="cbz" layoutX="167.0" layoutY="312.0" mnemonicParsing="false" text="Output CBZ" />
    </children>
 </AnchorPane>
