@@ -1,0 +1,9 @@
+-- unspecified date version 1.0 (ignoring the previous attempt)
+  Regex created for parsing - DrZed
+  HTML loading and cookies using Java native - KarelMikie3
+  GUI created - KarelMikie3
+  Visually downloading files as bytes are read - KarelMikie3
+  Uploaded and populated on Github - DrZed
+  
+  -- Sidenote I originally was rewriting it myself using apache but then karel
+    pointed out it can be easily done in java by itself and showed that off to me. ~ DrZed
