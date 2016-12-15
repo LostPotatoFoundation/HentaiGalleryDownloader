@@ -7,12 +7,14 @@ version = '1.0'
 repositories {
     mavenCentral()
 }
+
 dependencies {
-    compile files('libs/htmlunit-2.18-OSGi.jar')
+    compile files('libs/ConfigurationAPI-1.3.jar')
 }
+
 jar {
     manifest {
-        attributes("Main-Class": "Slayer.bot.downBot",
-                   "Application-Name": "DownBot")
+        attributes("Main-Class": "lostpotatofoundation.hentaigallerydownloader.gui.MainGui",
+                   "Application-Name": "Hentai gallery downloader")
     }
 }
