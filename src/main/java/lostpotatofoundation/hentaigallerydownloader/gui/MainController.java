@@ -7,8 +7,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import lostpotatofoundation.hentaigallerydownloader.GalleryDownloadThread;
+import lostpotatofoundation.hentaigallerydownloader.SearchParseThread;
 
 import javax.imageio.ImageIO;
+import java.util.ArrayDeque;
 
 public class MainController {
     private boolean isRunning;
@@ -19,6 +21,8 @@ public class MainController {
     public ProgressBar progressBar;
     public ImageView image;
     public Pane pane;
+    private ArrayDeque<String> links;
+    private int ls = 0;
 
     public void startDownload() {
         if (isRunning) return;
@@ -27,20 +31,44 @@ public class MainController {
         isRunning = true;
 
         progressBar.setProgress(0.0D);
-        downloader = new GalleryDownloadThread(linkText.getText());
 
         Thread main = new Thread(() -> {
-            while (!downloader.isDone()) {
-                if (progressBar == null) continue;
+            if (!linkText.getText().contains("?")) {
+                downloader = new GalleryDownloadThread(linkText.getText());
+            } else {
+                SearchParseThread t = new SearchParseThread(linkText.getText());
+                t.start();
+                while (!t.isDone()) {
+                    if (progressBar == null) continue;
 
-                progressBar.setProgress((downloader.getDownloadProgress() + downloader.getCompressionProgress()) / 2.0D);
-
-                try {
-                    if (downloader.getImageFile() == null) image.setImage(null);
-                    else image.setImage(SwingFXUtils.toFXImage(ImageIO.read(downloader.getImageFile()), null));
-                } catch (Exception e) {
-                    //e.printStackTrace();
+                    progressBar.setProgress(progressBar.getProgress() + 0.00001D);
+                    if (progressBar.getProgress() >= 1) progressBar.setProgress(0);
                 }
+                links = new ArrayDeque<>(t.getLinks());
+                ls = links.size();
+            }
+
+            if (links != null && !links.isEmpty()) downloader = new GalleryDownloadThread(links.pop());
+            while (links != null && !links.isEmpty()) {
+                if (downloader == null) {
+                    downloader = new GalleryDownloadThread(links.pop());
+                }
+                while (!downloader.isDone()) {
+                    if (progressBar == null) continue;
+
+                    double progress = (ls == 0) ?
+                            (downloader.getDownloadProgress() + downloader.getCompressionProgress()) / 2.0D :
+                            ((downloader.getDownloadProgress() + downloader.getCompressionProgress()) / 2.0D) * (links.size()-ls)/(double)ls;
+                    progressBar.setProgress(-progress);
+
+                    try {
+                        if (downloader.getImageFile() == null) image.setImage(null);
+                        else image.setImage(SwingFXUtils.toFXImage(ImageIO.read(downloader.getImageFile()), null));
+                    } catch (Exception e) {
+                        //e.printStackTrace();
+                    }
+                }
+                downloader = null;
             }
             progressBar.setProgress(0.0D);
             isRunning = false;
@@ -48,7 +76,8 @@ public class MainController {
 
         main.setDaemon(true);
         main.start();
-        downloader.start();
+        if (downloader != null)
+            downloader.start();
     }
 
     synchronized boolean isRunning() {

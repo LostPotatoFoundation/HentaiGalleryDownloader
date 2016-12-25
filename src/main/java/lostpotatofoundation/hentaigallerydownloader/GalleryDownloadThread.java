@@ -25,6 +25,7 @@ public class GalleryDownloadThread extends Thread {
     public GalleryDownloadThread(String pageURLString) {
         super("Gallery downloader #" + downloaderID++);
         this.pageURLString = pageURLString;
+        this.start();
     }
 
     @Override
@@ -132,15 +133,15 @@ public class GalleryDownloadThread extends Thread {
 
 
             for (String line : lineList) {
-                Matcher galleryMatcher = Pattern.compile(GalleryDownloader.GALLERY_PATTERN).matcher(line), rowMatcher = Pattern.compile(GalleryDownloader.ROWS_PATTERN).matcher(line), pageMatcher = Pattern.compile(GalleryDownloader.PAGES_PATTERN).matcher(line), titleMatcher = Pattern.compile(GalleryDownloader.TITLE_PATTERN).matcher(line);
+                Matcher slideMatcher = Pattern.compile(GalleryDownloader.SLIDE_PATTERN).matcher(line), rowMatcher = Pattern.compile(GalleryDownloader.ROWS_PATTERN).matcher(line), pageMatcher = Pattern.compile(GalleryDownloader.PAGES_PATTERN).matcher(line), titleMatcher = Pattern.compile(GalleryDownloader.TITLE_PATTERN).matcher(line);
                 boolean pageNumberFound = pageMatcher.find(), rowNumberFound = rowMatcher.find();
                 pages = pageNumberFound ? Integer.parseInt(pageMatcher.group().split(" ")[0]) : pages;
                 int rows = rowNumberFound ? Integer.parseInt(rowMatcher.group().split(" ")[0]) : 0;
                 title = title.isEmpty() && titleMatcher.find() ? titleMatcher.group().split(">")[1].replaceAll(GalleryDownloader.TITLE_PARSE_PATTERN, " ").trim() : title;
                 if (title.isEmpty()) continue;
 
-                while (galleryMatcher.find()) {
-                    parseImagePage(new File(GalleryDownloader.downloadDir, title), galleryMatcher.group());
+                while (slideMatcher.find()) {
+                    parseSlide(new File(GalleryDownloader.downloadDir, title), slideMatcher.group());
                     imageID++;
                 }
 
@@ -155,7 +156,7 @@ public class GalleryDownloadThread extends Thread {
         }
     }
 
-    private void parseImagePage(File galleryDir, String urlString) {
+    private void parseSlide(File galleryDir, String urlString) {
         if (Configuration.debug) System.out.println(urlString);
         try {
             if (!galleryDir.exists() && !galleryDir.mkdirs()) throw new RuntimeException("Couldn't create download directory.");
