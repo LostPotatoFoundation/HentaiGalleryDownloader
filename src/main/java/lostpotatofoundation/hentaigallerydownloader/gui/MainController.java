@@ -21,6 +21,7 @@ public class MainController {
     public ProgressBar progressBar;
     public ImageView image;
     public Pane pane;
+    public TextField title;
     private ArrayDeque<String> links;
     private int ls = 0;
 
@@ -55,7 +56,8 @@ public class MainController {
                 }
                 while (!downloader.isDone()) {
                     if (progressBar == null) continue;
-
+                    if (!downloader.getTitle().isEmpty() && !title.getText().equals(downloader.getTitle()))
+                        title.setText(downloader.getTitle());
                     double progress = (ls == 0) ?
                             (downloader.getDownloadProgress() + downloader.getCompressionProgress()) / 2.0D :
                             ((downloader.getDownloadProgress() + downloader.getCompressionProgress()) / 2.0D) * (links.size()-ls)/(double)ls;

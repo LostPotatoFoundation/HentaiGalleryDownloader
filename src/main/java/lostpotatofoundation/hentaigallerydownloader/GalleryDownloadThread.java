@@ -223,6 +223,10 @@ public class GalleryDownloadThread extends Thread {
         return 0.0D;
     }
 
+    public synchronized String getTitle() {
+        return title;
+    }
+
     public synchronized File getImageFile() {
         return imageFile;
     }
