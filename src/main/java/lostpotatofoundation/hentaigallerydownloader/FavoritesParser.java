@@ -51,9 +51,10 @@ public class FavoritesParser {
 
             if (test.find() && pages.isEmpty()) pages = test.group();
 
+            boolean keep = false;
             while (galleryMatcher.find()) {
                 String gallery = galleryMatcher.group();
-                favoriteGalleries.put(gallery.split("\"")[0], gallery.split(">")[1]);
+                if (keep = !keep) favoriteGalleries.put(gallery.split("\">")[0], gallery.split("\">")[1]);
             }
 
             if (pages.isEmpty()) continue;
@@ -83,9 +84,12 @@ public class FavoritesParser {
                 for (String line : lineList) {
                     Matcher galleryMatcher = Pattern.compile("(https?:\\/\\/exhentai\\.org\\/g\\/[^<]+\\/[^<]+)").matcher(line);
 
+                    boolean keep = false;
                     while (galleryMatcher.find()) {
                         String gallery = galleryMatcher.group();
-                        favoriteGalleries.put(gallery.split("\"")[0], gallery.split(">")[1]);
+
+
+                        if (keep = !keep) favoriteGalleries.put(gallery.split("\">")[0], gallery.split("\">")[1]);
                     }
                 }
             } while (totalGalleries > ++page * galleriesPerPage);
@@ -165,7 +169,10 @@ public class FavoritesParser {
 
         String[] splitSite = site.split("<form method=\"post\"");
 
-        if (splitSite.length - 1 < 2) System.out.println("non");
+        if (splitSite.length - 1 < 2) {
+            System.out.println("non");
+            return;
+        }
 
         System.out.println(torrentLink);
 
