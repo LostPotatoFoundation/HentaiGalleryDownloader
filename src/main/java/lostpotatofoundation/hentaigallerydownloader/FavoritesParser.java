@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,21 +41,19 @@ public class FavoritesParser {
         inputStream.close();
         connection.disconnect();
 
-
-
-        /*String pages = "";
+        String pages = "";
         int galleriesPerPage = -1;
         int totalGalleries = -1;
 
         for (String line : lineList) {
-            Matcher galleryMatcher = Pattern.compile(GalleryDownloader.GALLERY_PATTERN).matcher(line);
+            Matcher galleryMatcher = Pattern.compile("(https?:\\/\\/exhentai\\.org\\/g\\/[^<]+\\/[^<]+)").matcher(line);
             Matcher test = Pattern.compile("(?!Showing\\s)(?:\\d+\\-\\d+)\\sof\\s(?:\\d+)").matcher(line);
 
             if (test.find() && pages.isEmpty()) pages = test.group();
 
             while (galleryMatcher.find()) {
-                String link = galleryMatcher.group();
-                favoriteGalleries.put(link, getGalleryName(new URL(link)));
+                String gallery = galleryMatcher.group();
+                favoriteGalleries.put(gallery.split("\"")[0], gallery.split(">")[1]);
             }
 
             if (pages.isEmpty()) continue;
@@ -82,11 +81,11 @@ public class FavoritesParser {
                 connection2.disconnect();
 
                 for (String line : lineList) {
-                    Matcher galleryMatcher = Pattern.compile(GalleryDownloader.GALLERY_PATTERN).matcher(line);
+                    Matcher galleryMatcher = Pattern.compile("(https?:\\/\\/exhentai\\.org\\/g\\/[^<]+\\/[^<]+)").matcher(line);
 
                     while (galleryMatcher.find()) {
-                        String link = galleryMatcher.group();
-                        favoriteGalleries.put(link, getGalleryName(new URL(link)));
+                        String gallery = galleryMatcher.group();
+                        favoriteGalleries.put(gallery.split("\"")[0], gallery.split(">")[1]);
                     }
                 }
             } while (totalGalleries > ++page * galleriesPerPage);
@@ -102,11 +101,11 @@ public class FavoritesParser {
         favoriteGalleries.forEach((k, v) -> System.out.println(k + " = " + v));
         System.out.println(favoriteGalleries.size());
 
-        //for (String key : favoriteGalleries.keySet()) {
-        //    processGalleryTorrent(getGalleryTorrentLink(new URL(key)));
-        //}
+        for (String key : favoriteGalleries.keySet()) {
+            processGalleryTorrent(getGalleryTorrentLink(new URL(key)));
+        }
 
-        processGalleryTorrent(new URL("https://exhentai.org/gallerytorrents.php?gid=1054332&t=3ca70bfcc0"));/*/
+        //processGalleryTorrent(new URL("https://exhentai.org/gallerytorrents.php?gid=1054332&t=3ca70bfcc0"));
 
         //GalleryDownloadThread[] test = new GalleryDownloadThread[4];
 
@@ -121,32 +120,6 @@ public class FavoritesParser {
         //        }
         //    }
         //}
-    }
-
-    private static String getGalleryName(URL url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.addRequestProperty("Cookie", Configuration.getCookies());
-
-        InputStream inputStream = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-
-
-        LinkedList<String> lineList = new LinkedList<>();
-        Stream<String> lines = reader.lines();
-        lineList.addAll(lines.collect(Collectors.toList()));
-        reader.close();
-        inputStream.close();
-        connection.disconnect();
-
-        for (String line : lineList) {
-            Matcher titleMatcher = Pattern.compile(GalleryDownloader.TITLE_PATTERN).matcher(line);
-
-
-
-            if (!titleMatcher.find()) continue;
-            return titleMatcher.group().split(">")[1].replaceAll(GalleryDownloader.TITLE_PARSE_PATTERN, " ").trim();
-        }
-        return "";
     }
 
     private static URL getGalleryTorrentLink(URL url) throws IOException {
@@ -271,18 +244,14 @@ public class FavoritesParser {
         openTorrent(largestTorrent);
     }
 
-    @SuppressWarnings("Duplicates")
     private static void openTorrent(String torrentDownload) {
         try {
-            String[] command = new String[]{
-                    "C:\\Users\\Sietse\\AppData\\Roaming\\uTorrent\\uTorrent.exe",
-                    "/DIRECTORY \"D:/Development/IdeaProjects/HentaiGalleryDownloader/DirtyDownloads/\"",
-                    "\"" + torrentDownload + "\""
-            };
-
             Runtime runtime = Runtime.getRuntime();
 
-            final Process p = runtime.exec(command);
+            final Process p = runtime.exec(
+                    "C:\\Users\\Sietse\\AppData\\Roaming\\uTorrent\\uTorrent.exe /DIRECTORY " +
+                    "\"D:\\Development\\IdeaProjects\\HentaiGalleryDownloader\\DirtyDownloads\\\" " +
+                    "\"" + torrentDownload + "\"");
 
             p.waitFor();
         } catch (Exception e) {
