@@ -2,6 +2,7 @@ package lostpotatofoundation.hentaigallerydownloader;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.LinkedList;
@@ -129,18 +130,19 @@ public class GalleryDownloadThread extends Thread {
             lineList.addAll(lines.collect(Collectors.toList()));
             reader.close();
             inputStream.close();
+            connection.disconnect();
 
 
             for (String line : lineList) {
-                Matcher galleryMatcher = Pattern.compile(GalleryDownloader.GALLERY_PATTERN).matcher(line), rowMatcher = Pattern.compile(GalleryDownloader.ROWS_PATTERN).matcher(line), pageMatcher = Pattern.compile(GalleryDownloader.PAGES_PATTERN).matcher(line), titleMatcher = Pattern.compile(GalleryDownloader.TITLE_PATTERN).matcher(line);
+                Matcher slideMatcher = Pattern.compile(GalleryDownloader.SLIDE_PATTERN).matcher(line), rowMatcher = Pattern.compile(GalleryDownloader.ROWS_PATTERN).matcher(line), pageMatcher = Pattern.compile(GalleryDownloader.PAGES_PATTERN).matcher(line), titleMatcher = Pattern.compile(GalleryDownloader.TITLE_PATTERN).matcher(line);
                 boolean pageNumberFound = pageMatcher.find(), rowNumberFound = rowMatcher.find();
                 pages = pageNumberFound ? Integer.parseInt(pageMatcher.group().split(" ")[0]) : pages;
                 int rows = rowNumberFound ? Integer.parseInt(rowMatcher.group().split(" ")[0]) : 0;
                 title = title.isEmpty() && titleMatcher.find() ? titleMatcher.group().split(">")[1].replaceAll(GalleryDownloader.TITLE_PARSE_PATTERN, " ").trim() : title;
                 if (title.isEmpty()) continue;
 
-                while (galleryMatcher.find()) {
-                    parseImagePage(new File(GalleryDownloader.downloadDir, title), galleryMatcher.group());
+                while (slideMatcher.find()) {
+                    parseSlide(new File(GalleryDownloader.downloadDir, title), slideMatcher.group());
                     imageID++;
                 }
 
@@ -155,7 +157,7 @@ public class GalleryDownloadThread extends Thread {
         }
     }
 
-    private void parseImagePage(File galleryDir, String urlString) {
+    private void parseSlide(File galleryDir, String urlString) {
         if (Configuration.debug) System.out.println(urlString);
         try {
             if (!galleryDir.exists() && !galleryDir.mkdirs()) throw new RuntimeException("Couldn't create download directory.");
@@ -170,6 +172,9 @@ public class GalleryDownloadThread extends Thread {
             LinkedList<String> lineList = new LinkedList<>();
             Stream<String> lines = reader.lines();
             lineList.addAll(lines.collect(Collectors.toList()));
+            reader.close();
+            inputStream.close();
+            connection.disconnect();
 
             for (String line : lineList) {
                 Matcher matcher = Pattern.compile(GalleryDownloader.IMAGE_PATTERN).matcher(line);
@@ -179,9 +184,6 @@ public class GalleryDownloadThread extends Thread {
                 }
             }
 
-            reader.close();
-            inputStream.close();
-
         } catch (Exception e) {
             if (Configuration.debug) e.printStackTrace();
         }
@@ -189,23 +191,30 @@ public class GalleryDownloadThread extends Thread {
 
     private void downloadImage(File galleryDir, String urlString) throws Exception {
         //System.out.println(urlString);
-        URL url = new URL(urlString);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.addRequestProperty("Cookie", Configuration.getCookies());
 
-        imageFile = new File(galleryDir, imageID +".png");
-        if (!imageFile.createNewFile()) return;
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.addRequestProperty("Cookie", Configuration.getCookies());
 
-        InputStream inputStream = connection.getInputStream();
-        FileOutputStream outputStream = new FileOutputStream(imageFile);
+            imageFile = new File(galleryDir, imageID +".png");
+            if (!imageFile.createNewFile()) return;
 
-        byte[] b = new byte[16384];
-        int length;
-        while ((length = inputStream.read(b)) != -1) {
-            outputStream.write(b, 0, length);
+            InputStream inputStream = connection.getInputStream();
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+
+            byte[] b = new byte[16384];
+            int length;
+            while ((length = inputStream.read(b)) != -1) {
+                outputStream.write(b, 0, length);
+            }
+            inputStream.close();
+            outputStream.close();
+        } catch (SocketException e) {
+            System.out.println(e.getMessage());
+            downloadImage(galleryDir, urlString);
         }
-        inputStream.close();
-        outputStream.close();
+
     }
 
     public synchronized boolean isDone() {

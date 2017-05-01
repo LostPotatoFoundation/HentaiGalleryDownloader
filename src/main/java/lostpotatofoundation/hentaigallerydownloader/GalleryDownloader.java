@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class GalleryDownloader {
-    static final String GALLERY_PATTERN = "(?:https?://(ex|g\\.e-)hentai\\.org/s/)([^\"<>]+)";
+    static final String GALLERY_PATTERN = "(?:https?://(ex|g\\.e-)hentai\\.org/g/)([^\"<>]+)";
+    static final String SLIDE_PATTERN = "(?:https?://(ex|g\\.e-)hentai\\.org/s/)([^\"<>]+)";
     static final String PAGES_PATTERN = "(?:\\d+) pages";
     static final String ROWS_PATTERN = "(?:\\d+) rows";
     static final String TITLE_PATTERN = "(?:<h1 id=\"gn\")([^<]+)";
