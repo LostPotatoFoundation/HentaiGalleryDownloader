@@ -109,7 +109,7 @@ public class FavoritesParser {
             processGalleryTorrent(getGalleryTorrentLink(new URL(key)));
         }
 
-        //processGalleryTorrent(new URL("https://exhentai.org/gallerytorrents.php?gid=1054332&t=3ca70bfcc0"));
+        //processGalleryTorrent(new URL("https://exhentai.org/gallerytorrents.php?gid=500175&t=24d17837d6"));
 
         //GalleryDownloadThread[] test = new GalleryDownloadThread[4];
 
@@ -170,7 +170,7 @@ public class FavoritesParser {
         String[] splitSite = site.split("<form method=\"post\"");
 
         if (splitSite.length - 1 < 2) {
-            System.out.println("non");
+            System.out.println("non: " + torrentLink);
             return;
         }
 
@@ -195,8 +195,10 @@ public class FavoritesParser {
             Matcher downloads = Pattern.compile("(Downloads:</span> \\d+)").matcher(splitSite[i]);
             Matcher torrent = Pattern.compile("(?:https?://ehtracker[^\"]+)").matcher(splitSite[i]);
 
-            if (!torrent.find()) continue;
-            String currentTorrent = torrent.group();
+            if (!torrent.find() || !torrent.find()) continue;
+            String currentTorrent = torrent.group().replace("'; return false", "").trim();
+
+            //System.out.println(currentTorrent);
 
             if (date.find()) {
                 SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd hh:mm");
