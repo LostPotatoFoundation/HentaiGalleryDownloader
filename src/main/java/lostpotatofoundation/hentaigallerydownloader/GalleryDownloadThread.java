@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +37,35 @@ public class GalleryDownloadThread extends Thread {
         parsePage(pageURLString);
         imageFile = null;
 
+        if (Configuration.preCompressCommands.size() > 0) {
+            File looseFileDirectory = new File(GalleryDownloader.downloadDir, title);
+            for (String command : Configuration.preCompressCommands) {
+                File[] innerFiles = looseFileDirectory.listFiles();
+                assert innerFiles != null;
+
+                final String[] c = command.split(" ");
+
+                int index = 0;
+                for (int i = 0; i < c.length; i++) {
+                    if (c[i].contains("%IMAGE%")) {
+                        index = i;
+                        break;
+                    }
+
+                }
+                if (Configuration.debug)
+                    System.out.println(Arrays.toString(innerFiles));
+
+                for (File innerFile : innerFiles) {
+                    String[] clone = c.clone();
+                    clone[index] = "\"" + innerFile.getPath() + "\"";
+                    if (Configuration.debug)
+                        System.out.println(Arrays.toString(clone));
+                    runCommands(clone);/* ? */
+                }
+            }
+        }
+
         if (Configuration.compress) {
             if (Configuration.compressionType.equalsIgnoreCase("cb7") || Configuration.compressionType.equalsIgnoreCase("7z")) compressGallery_cb7();
             else if (Configuration.compressionType.equalsIgnoreCase("cbz") || Configuration.compressionType.equalsIgnoreCase("zip")) compressGallery_cbz();
@@ -56,18 +86,8 @@ public class GalleryDownloadThread extends Thread {
         looseFileDirectory.delete();
     }
 
-    private void compressGallery_cb7() {
-        if (!new File(Configuration.program7zPath).exists()) throw new RuntimeException("7z.exe path is invalid.");
-
+    private void runCommands(String[] command) {
         try {
-            String[] command = new String[]{
-                    Configuration.program7zPath,
-                    "a",
-                    "-t7z",
-                    "\"" + GalleryDownloader.downloadDir.getPath().replace("\\", "/") + "/" + title + ".cb7\"",
-                    "\"" + GalleryDownloader.downloadDir.getPath().replace("\\", "/") + "/" + title + "/*\""
-            };
-
             Runtime runtime = Runtime.getRuntime();
 
             final Process p = runtime.exec(command);
@@ -85,6 +105,26 @@ public class GalleryDownloadThread extends Thread {
             }).start();
 
             p.waitFor();
+        } catch (Exception i) {
+            System.out.println(i.getMessage());
+            if (Configuration.debug) i.printStackTrace();
+        }
+    }
+
+    private void compressGallery_cb7() {
+        if (!new File(Configuration.program7zPath).exists()) throw new RuntimeException("7z.exe path is invalid.");
+
+        try {
+            String[] command = new String[]{
+                    Configuration.program7zPath,
+                    "a",
+                    "-t7z",
+                    "\"" + GalleryDownloader.downloadDir.getPath().replace("\\", "/") + "/" + title + ".cb7\"",
+                    "\"" + GalleryDownloader.downloadDir.getPath().replace("\\", "/") + "/" + title + "/*\""
+            };
+            runCommands(command);
+
+
             imagesCompressed = pages;
         } catch (Exception e) {
             if (Configuration.debug) e.printStackTrace();
@@ -139,6 +179,7 @@ public class GalleryDownloadThread extends Thread {
                 pages = pageNumberFound ? Integer.parseInt(pageMatcher.group().split(" ")[0]) : pages;
                 int rows = rowNumberFound ? Integer.parseInt(rowMatcher.group().split(" ")[0]) : 0;
                 title = title.isEmpty() && titleMatcher.find() ? titleMatcher.group().split(">")[1].replaceAll(GalleryDownloader.TITLE_PARSE_PATTERN, " ").trim() : title;
+                if (title.contains("|")) title = Configuration.attemptEnglish ? title.split("\\|")[1].trim() : title.replaceAll("\\|", "").trim();
                 if (title.isEmpty()) continue;
 
                 while (slideMatcher.find()) {
@@ -212,9 +253,15 @@ public class GalleryDownloadThread extends Thread {
             outputStream.close();
         } catch (SocketException e) {
             System.out.println(e.getMessage());
+            File f = new File(galleryDir, imageID + ".png");
+            if (f.exists()) f.delete();
             downloadImage(galleryDir, urlString);
         }
-
+        File f = new File(galleryDir, imageID + ".png");
+        if (!f.canRead() || !f.exists() || f.getTotalSpace() == 0) {
+            f.delete();
+            downloadImage(galleryDir, urlString);
+        }
     }
 
     public synchronized boolean isDone() {
@@ -229,6 +276,10 @@ public class GalleryDownloadThread extends Thread {
     public synchronized double getCompressionProgress() {
         if (pages != 0) return (double) Math.min(imagesCompressed, pages) / (double) pages;
         return 0.0D;
+    }
+
+    public synchronized String getTitle() {
+        return title;
     }
 
     public synchronized File getImageFile() {

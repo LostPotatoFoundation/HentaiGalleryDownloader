@@ -18,7 +18,7 @@ public class GalleryDownloader {
 
     static final String IMAGE_PATTERN = "(?:http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(:\\d{1,5})?/)[^\"]+";
 
-    static final String TITLE_PARSE_PATTERN = "(\\[.*?\\]|\\{.*?\\}|\\(.*?\\))|(=.*=|~.*~)|([^a-z,A-Z,\\s,\\-,\\~,\\d,\\_])|(\\s{2,}|\\s+\\.)";
+    static final String TITLE_PARSE_PATTERN = "(\\[.*?\\]|\\{.*?\\}|\\(.*?\\))|(=.*=|~.*~)|([^a-z,A-Z,\\s,\\-,\\~,\\|,\\d,\\_])|(\\s{2,}|\\s+\\.)";
 
     public static File downloadDir = new File(System.getProperty("user.dir"), "DirtyDownloads");
 
