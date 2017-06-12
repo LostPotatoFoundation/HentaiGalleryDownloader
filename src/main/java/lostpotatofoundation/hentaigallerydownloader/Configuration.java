@@ -23,6 +23,7 @@ public class Configuration {
 
     @Config.category("Compression")
     public static boolean deleteLoseFiles = true;
+    //Laughs at typo
 
     @Config.category("Compression")
     public static String program7zPath = "C:/Program Files/7-Zip/7z.exe";
