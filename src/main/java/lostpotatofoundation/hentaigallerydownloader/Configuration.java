@@ -2,10 +2,7 @@ package lostpotatofoundation.hentaigallerydownloader;
 
 import hxckdms.hxcconfig.Config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
 @Config
@@ -15,7 +12,7 @@ public class Configuration {
     public static List<String> preCompressCommands = new ArrayList<>();
 
     @Config.category("Other")
-    public static List<String> cssSheets = Arrays.asList("light.css", "dark.css", "peach.css", "pink.css");
+    public static LinkedList<String> cssSheets = new LinkedList<>(Arrays.asList("light.css", "dark.css", "peach.css", "pink.css"));
 
     @Config.category("Other")
     @Config.comment("This will split titles on the | and use the second part, may break in some rare cases. Report those with gallery title or link please.")

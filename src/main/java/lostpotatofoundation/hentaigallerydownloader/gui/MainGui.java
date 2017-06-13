@@ -24,7 +24,7 @@ import static lostpotatofoundation.hentaigallerydownloader.GalleryDownloader.dow
 
 public class MainGui extends Application {
     private double initialWidth, initialHeight;
-
+    public static HxCConfig mainConfig;
     public static void main(String[] args) {
         URLClassLoader classLoader = (URLClassLoader) MainGui.class.getClassLoader();
         try {
@@ -40,7 +40,7 @@ public class MainGui extends Application {
 
         System.out.println(classLoader);
 
-        HxCConfig mainConfig = new HxCConfig(Configuration.class, "configuration", new File(System.getProperty("user.dir")), "cfg", "galleryDownloader");
+        mainConfig = new HxCConfig(Configuration.class, "configuration", new File(System.getProperty("user.dir")), "cfg", "galleryDownloader");
         mainConfig.initConfiguration();
         Configuration.initCookies();
 

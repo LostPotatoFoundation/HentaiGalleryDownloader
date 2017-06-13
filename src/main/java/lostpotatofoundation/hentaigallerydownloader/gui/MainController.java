@@ -111,13 +111,13 @@ public class MainController {
     }
 
     public void changeTheme() {
-        style += 1;
-        if (style >= Configuration.cssSheets.size())
-            style = 0;
-        File f = new File("themes/" + Configuration.cssSheets.get(style));
+        Configuration.cssSheets.add(Configuration.cssSheets.removeFirst());
+        MainGui.mainConfig.initConfiguration();
+        File f = new File("themes/" + Configuration.cssSheets.get(0));
         this.pane.getScene().getStylesheets().clear();
         this.pane.getScene().getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
     }
+
     // TODO
     // Custom gear Icon button Config Screen?
     // Settings for torrent shite, including preferences...
