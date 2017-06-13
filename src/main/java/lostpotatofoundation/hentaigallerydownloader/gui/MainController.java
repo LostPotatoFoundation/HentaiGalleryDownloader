@@ -114,7 +114,7 @@ public class MainController {
         style += 1;
         if (style >= Configuration.cssSheets.size())
             style = 0;
-        File f = new File(Configuration.cssSheets.get(style));
+        File f = new File("themes/" + Configuration.cssSheets.get(style));
         this.pane.getScene().getStylesheets().clear();
         this.pane.getScene().getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
     }
