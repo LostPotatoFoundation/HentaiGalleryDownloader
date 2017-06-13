@@ -53,7 +53,7 @@ public class MainGui extends Application {
         FXMLLoader initialLoader = new FXMLLoader(getClass().getResource("/lostpotatofoundation/hentaigallerydownloader/innerGUI.fxml"));
 
         Pane root = new Pane();
-        primaryStage.setTitle("downloader");
+        primaryStage.setTitle("Hentai downloader");
 
         Pane pane = initialLoader.load();
         pane.setId("0:0");
@@ -65,6 +65,13 @@ public class MainGui extends Application {
 
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+
+        if (!Configuration.cssSheets.isEmpty()) {
+            File f = new File("themes/" + Configuration.cssSheets.get(0));
+            primaryStage.getScene().getStylesheets().clear();
+            System.out.println(f.getAbsolutePath());
+            primaryStage.getScene().getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        }
 
         initialWidth = primaryStage.getWidth();
         initialHeight = primaryStage.getHeight();

@@ -1,0 +1,18 @@
+.button {
+	-fx-background-color: #EED5D4;
+	-fx-border-color: #FF5534
+}
+
+.root {
+	-fx-background-color: #FFE5E4;
+	-fx-border-color: #FFD5E4
+}
+
+#titlePart {
+	-fx-background-color: #FFE0D0;
+	-fx-border: 0px
+}
+
+#linkText {
+	-fx-background-color: #FFF5D5
+}

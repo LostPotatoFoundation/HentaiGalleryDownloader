@@ -3,6 +3,7 @@ package lostpotatofoundation.hentaigallerydownloader;
 import hxckdms.hxcconfig.Config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -12,6 +13,9 @@ public class Configuration {
     @Config.category("Other")
     @Config.comment("These are run before compression step after downloading images, use this as you want the image arg is %IMAGE% will replace with path to image in command. Entire exe path only no system args.")
     public static List<String> preCompressCommands = new ArrayList<>();
+
+    @Config.category("Other")
+    public static List<String> cssSheets = Arrays.asList("light.css", "dark.css", "peach.css", "pink.css");
 
     @Config.category("Other")
     @Config.comment("This will split titles on the | and use the second part, may break in some rare cases. Report those with gallery title or link please.")
@@ -27,6 +31,9 @@ public class Configuration {
 
     @Config.category("Compression")
     public static String program7zPath = "C:/Program Files/7-Zip/7z.exe";
+
+    @Config.category("Other")
+    public static String watchedLinksFilePath = "C:/Users/Public/Downloads/links.txt";
 
     @Config.category("Compression")
     @Config.comment("Current options cb7/7z and cbz/zip. can be zip/7z or cbz/cb7 extension. Notes: cb7 only works on windows for now and requires the program7zPath to be set correctly.")

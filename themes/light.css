@@ -1,0 +1,21 @@
+.button {
+	-fx-background-color: #FFF;
+	-fx-border-color: #BBB;
+    -fx-text-fill: #000;
+}
+
+.root {
+	-fx-background-color: #FFF;
+	-fx-border-color: #000
+}
+
+#titlePart {
+	-fx-background-color: #FFF;
+	-fx-border: 0px;
+	-fx-text-fill: #000
+}
+
+#linkText {
+	-fx-background-color: #EEE;
+	-fx-text-fill: #000
+}
